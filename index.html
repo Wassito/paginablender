@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escudo Medieval Interactivo</title>
+    <!-- Importar model-viewer de Google -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    <style>
+        body { 
+            margin: 0; 
+            background: #121212; 
+            font-family: Arial, sans-serif; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+        }
+        h1 { margin-bottom: 5px; font-size: 1.5rem; }
+        p { color: #888; font-size: 0.9rem; margin-top: 0; }
+        model-viewer { 
+            width: 85%; 
+            height: 70vh; 
+            background-color: #1e1e1e; 
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        .controls { 
+            display: flex; 
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px; 
+            margin-top: 20px; 
+        }
+        button { 
+            padding: 10px 20px; 
+            background: #d4af37; 
+            border: none; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            transition: background 0.3s;
+        }
+        button:hover { background: #b89728; }
+    </style>
+</head>
+<body>
+
+    <h1>Escudo Medieval PBR</h1>
+    <p>Proyecto Personal Interactivo - Web Real-Time</p>
+
+    <!-- Visor 3D -->
+    <model-viewer id="escudo" src="EscudoTerm.glb" alt="Escudo Medieval 3D" 
+        auto-rotate 
+        camera-controls 
+        shadow-intensity="3.0" 
+        shadow-softness="0.5" 
+        exposure="0.6"
+        environment-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr"
+        skybox-image="https://modelviewer.dev/shared-assets/environments/spruit_sunrise_1k_HDR.hdr">
+    </model-viewer>
+
+    <!-- 5 Botones Interactivos -->
+    <div class="controls">
+        <button onclick="cambiarColor('Material')">Color Madera</button>
+        <button onclick="cambiarColor('MatContor')">Color Acero</button>
+        <button onclick="cambiarColor('MatCruz')">Color Umbral</button>
+        <button onclick="alternarRotacion()">Alternar Rotación</button>
+        <button onclick="resetearVista()">Reiniciar Vista</button>
+    </div>
+
+    <script>
+        // Declaramos la variable viewer UNA SOLA VEZ
+        const viewer = document.querySelector('#escudo');
+
+        // Función unificada: Recibe el nombre del material a cambiar
+        function cambiarColor(nombreMaterial) {
+            // Asegurarnos de que el modelo ya haya cargado antes de intentar cambiar el color
+            if (!viewer.model) {
+                alert("El modelo aún está cargando...");
+                return;
+            }
+
+            // Busca el material por su nombre exacto
+            const material = viewer.model.materials.find(mat => mat.name === nombreMaterial); 
+
+            if (material) {
+                // Genera un color aleatorio [R, G, B, Opacidad]
+                const r = Math.random();
+                const g = Math.random();
+                const b = Math.random();
+                material.pbrMetallicRoughness.setBaseColorFactor([r, g, b, 1.0]);
+            } else {
+                alert("No se encontró el material: " + nombreMaterial);
+            }
+        }
+
+        // Activa o pausa la rotación
+        function alternarRotacion() {
+            viewer.toggleAttribute('auto-rotate');
+        }
+
+        // Restablece la cámara
+        function resetearVista() {
+            viewer.cameraOrbit = "0deg 75deg 105m";
+            viewer.fieldOfView = "30deg";
+        }
+    </script>
+
+</body>
+</html>
